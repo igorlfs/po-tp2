@@ -39,7 +39,7 @@ function main()
 
     num_colors = maximum(color_assignment)
 
-    print("TP2 $MATRÍCULA = $num_colors")
+    println("TP2 $MATRÍCULA = $num_colors")
 end
 
 main()
