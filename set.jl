@@ -26,12 +26,12 @@ function main()
     neighbors_sum::Array{Int64} = [sum(adj_matrix[x, :]) for x in 1:num_vertices]
     neighbors_sum = [x == 0 ? typemax(Int64) : x for x in neighbors_sum]
 
-    independent_set = Set{Int}()
+    independent_set = Vector{Int}()
 
     while !all(x -> x == typemax(Int64), neighbors_sum)
         vertex::Int64 = argmin(neighbors_sum)
 
-        push!(independent_set, vertex)
+        append!(independent_set, vertex)
 
         neighbors_sum[vertex] = typemax(Int64) # Desconsidere o vértice nas próximas iterações
 
@@ -45,6 +45,8 @@ function main()
     size_set::Int64 = length(independent_set)
 
     println("TP2 $MATRÍCULA = $size_set")
+
+    sort!(independent_set)
 
     for v in independent_set
         print("$v\t")
