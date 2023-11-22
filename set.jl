@@ -42,7 +42,14 @@ function main()
         end
     end
 
-    println("TP2 $MATRÍCULA = $(length(independent_set))")
+    size_set::Int64 = length(independent_set)
+
+    println("TP2 $MATRÍCULA = $size_set")
+
+    for v in independent_set
+        print("$v\t")
+    end
+    println()
 end
 
 main()

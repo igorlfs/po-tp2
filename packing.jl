@@ -20,27 +20,42 @@ function main()
     weights::Vector{Float64} = read_weights(input_file, num_objects)
 
     capacities::Vector{Float64} = fill(MAX_WEIGHT, size(weights))
+    bins_content::Vector{Vector{Int64}} = Vector{Vector{Int64}}(undef, 0)
 
     sort!(weights, rev=true)
 
-    for w in weights
-        for (i, c) in enumerate(capacities)
+    for (i, w) in enumerate(weights)
+        added_to_existing_bin = false
+        for (j, c) in enumerate(capacities)
             if c - w >= 0
-                capacities[i] = c - w
+                capacities[j] = c - w
+
+                if isempty(bins_content) || length(bins_content) < j
+                    push!(bins_content, [i])
+                else
+                    push!(bins_content[j], i)
+                end
+
+                added_to_existing_bin = true
+
                 break
             end
         end
-    end
-
-    num_bins::Int64 = 0
-
-    for c in capacities
-        if c != MAX_WEIGHT
-            num_bins += 1
+        if !added_to_existing_bin
+            push!(bins_content, [i])
         end
     end
 
+    num_bins::Int64 = length(bins_content)
+
     println("TP2 $MATRÍCULA = $num_bins")
+
+    for (_, bin_content) in enumerate(bins_content)
+        for b in bin_content
+            print("$b\t")
+        end
+        println()
+    end
 
 end
 
