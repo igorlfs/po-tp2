@@ -72,9 +72,10 @@ function main()
     # println(sum(prod_per_period) == sum(demand))
 
     println("TP2 $MATRÍCULA = $total_cost")
-    for (i, c) in enumerate(prod_per_period)
-        println("Produção no periodo $i: $(floor(Int,c)) ")
+    for (_, c) in enumerate(prod_per_period)
+        print("$c\t")
     end
+    println()
 end
 
 main()

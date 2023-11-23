@@ -40,6 +40,20 @@ function main()
     num_colors = maximum(color_assignment)
 
     println("TP2 $MATRÍCULA = $num_colors")
+
+    class_list = [Vector{Int64}() for _ in 1:num_colors]
+
+    for c in 1:num_colors
+        class_list[c] = findall(x -> x == c, color_assignment)
+    end
+
+    for (_, vertices) in enumerate(class_list)
+        sort!(vertices)
+        for v in vertices
+            print("$v\t")
+        end
+        println()
+    end
 end
 
 main()
