@@ -33,13 +33,19 @@ function main()
 
         append!(independent_set, vertex)
 
-        neighbors_sum[vertex] = typemax(Int64) # Desconsidere o vértice nas próximas iterações
-
+        # Removendo os vizinhos de vertex
         for (i, v) in enumerate(adj_matrix[vertex, :])
-            if v == 1
-                neighbors_sum[i] = typemax(Int64) # Desconsidere também seus vizinhos
+            if v
+                adj_matrix[:, i] .= 0
+                adj_matrix[i, :] .= 0
             end
         end
+        # Removendo vertex
+        adj_matrix[:, vertex] .= 0
+        adj_matrix[vertex, :] .= 0
+
+        neighbors_sum = [sum(adj_matrix[x, :]) for x in 1:num_vertices]
+        neighbors_sum = [x == 0 ? typemax(Int64) : x for x in neighbors_sum]
     end
 
     size_set::Int64 = length(independent_set)
