@@ -21,31 +21,49 @@ function main()
     num_vertices::Int64 = parse(Int64, split(readline(input_file), "\t")[2])
     adj_matrix::Matrix{Bool} = read_matrix(input_file, num_vertices)
 
-    # Conte os vizinhos, mas como queremos pegar vértices que tem pelo menos um vizinho,
-    # coloque a soma de quem tiver 0 vizinhos como infinito
-    neighbors_sum::Array{Int64} = [sum(adj_matrix[x, :]) for x in 1:num_vertices]
-    neighbors_sum = [x == 0 ? typemax(Int64) : x for x in neighbors_sum]
-
     independent_set = Vector{Int}()
 
-    while !all(x -> x == typemax(Int64), neighbors_sum)
-        vertex::Int64 = argmin(neighbors_sum)
+    # Os vértices que já estão cobertos mas não fazem parte do conjunto independente
+    covered_vertices = Vector{Int}()
 
-        append!(independent_set, vertex)
+    # Conte os vizinhos
+    neighbors_sum = [sum(adj_matrix[x, :]) for x in 1:num_vertices]
 
-        # Removendo os vizinhos de vertex
-        for (i, v) in enumerate(adj_matrix[vertex, :])
+    # Coloque vértices isolados dentro do conjunto
+    for (i, sum) in enumerate(neighbors_sum)
+        if sum == 0
+            append!(independent_set, i)
+        end
+    end
+
+    while true
+        min_neighbors_idx = 1
+        min_neighbors = typemax(Int64)
+        for i in 1:num_vertices
+            if neighbors_sum[i] < min_neighbors && !(i in independent_set) && !(i in covered_vertices)
+                min_neighbors = neighbors_sum[i]
+                min_neighbors_idx = i
+            end
+        end
+        if min_neighbors == typemax(Int64)
+            break
+        end
+
+        append!(independent_set, min_neighbors_idx)
+
+        # Removendo os vizinhos de min_neighbors_idx
+        for (i, v) in enumerate(adj_matrix[min_neighbors_idx, :])
             if v
+                append!(covered_vertices, i)
                 adj_matrix[:, i] .= 0
                 adj_matrix[i, :] .= 0
             end
         end
-        # Removendo vertex
-        adj_matrix[:, vertex] .= 0
-        adj_matrix[vertex, :] .= 0
+        # Removendo min_neighbors_idx
+        adj_matrix[:, min_neighbors_idx] .= 0
+        adj_matrix[min_neighbors_idx, :] .= 0
 
         neighbors_sum = [sum(adj_matrix[x, :]) for x in 1:num_vertices]
-        neighbors_sum = [x == 0 ? typemax(Int64) : x for x in neighbors_sum]
     end
 
     size_set::Int64 = length(independent_set)
